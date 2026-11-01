@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101820"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="5K Tracker">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<title>5K Sub-20 Tracker</title>
+<style>
+:root{--bg:#0b1117;--panel:#141e27;--panel2:#1b2934;--text:#f3f6f8;--muted:#9eacb8;--accent:#b7f36b;--line:#2b3b47;--red:#ff8d80}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+header{padding:26px 20px 18px;background:linear-gradient(135deg,#172631,#101820)}.eyebrow{color:var(--accent);font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}h1{font-size:27px;margin:7px 0 4px}header p{margin:0;color:var(--muted);font-size:13px}
+main{max-width:760px;margin:auto;padding:16px}.tabs{display:flex;gap:8px;overflow:auto;padding:0 0 12px}.tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:10px 14px;border-radius:22px;white-space:nowrap;font-weight:700}.tab.active{background:var(--accent);color:#101820;border-color:var(--accent)}
+.page{display:none}.page.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px;margin-bottom:12px}.metric small,.muted{color:var(--muted)}.metric strong{display:block;font-size:25px;margin-top:7px}.metric .unit{font-size:12px;color:var(--muted);font-weight:500}.section-title{font-size:17px;margin:18px 0 10px}.bar{height:9px;background:#2b3b47;border-radius:20px;overflow:hidden;margin:12px 0 5px}.bar span{display:block;height:100%;background:var(--accent);width:0;border-radius:20px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.pill{font-size:11px;color:var(--accent);background:#263722;padding:5px 8px;border-radius:20px;font-weight:800}
+label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}input,select,textarea{width:100%;border:1px solid var(--line);background:#0e171e;color:var(--text);padding:12px;border-radius:11px;font:inherit;min-height:44px}textarea{min-height:75px;resize:vertical}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;background:var(--accent);color:#101820;font-weight:800;padding:13px 16px;width:100%;margin-top:14px;font-size:14px}.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.workout{padding:13px 0;border-bottom:1px solid var(--line)}.workout:last-child{border:0}.workout h3{font-size:14px;margin:0 0 5px}.workout p{font-size:12px;color:var(--muted);margin:0;line-height:1.5}.check{width:22px;height:22px;accent-color:var(--accent)}.entry{padding:12px 0;border-bottom:1px solid var(--line)}.entry:last-child{border:0}.entry strong{font-size:14px}.entry p{margin:5px 0 0;color:var(--muted);font-size:12px}.empty{color:var(--muted);font-size:13px;text-align:center;padding:22px 8px}.nav{position:fixed;bottom:0;left:0;right:0;background:#111b23;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:center;z-index:5}.nav small{color:var(--muted);font-size:11px}.hint{font-size:12px;color:var(--muted);line-height:1.5}.danger{color:var(--red)}canvas{width:100%;height:190px;display:block}.target{font-size:34px;font-weight:850;letter-spacing:-1px}
+@media(min-width:600px){header{padding-left:max(20px,calc((100vw - 720px)/2))}main{padding-top:22px}.grid.four{grid-template-columns:repeat(4,1fr)}}
+</style></head>
+<body>
+<header><div class="eyebrow">Training companion · 12 minggu</div><h1>5K Sub-20 Tracker</h1><p>Catat latihan, pantau konsistensi, dan ukur progres menuju 24 Januari 2027.</p></header>
+<main>
+<div class="tabs">
+<button class="tab active" data-tab="overview">Ringkasan</button><button class="tab" data-tab="plan">Program</button><button class="tab" data-tab="log">Catat lari</button><button class="tab" data-tab="history">Riwayat</button>
+</div>
+<section id="overview" class="page active">
+<div class="card"><div class="row"><div><div class="eyebrow">Target race · 24 Jan 2027</div><div class="target">19:59</div><div class="muted">Pace target ≤ 4:00/km</div></div><span class="pill" id="daysLeft">— hari lagi</span></div><div class="bar"><span id="progressBar"></span></div><div class="row"><small class="muted" id="progressText">Belum ada catatan</small><small class="muted">Target 5K</small></div></div>
+<div class="grid">
+<div class="card metric"><small>PB 5K terakhir</small><strong id="pbValue">22:00</strong><span class="unit">Asumsi awal · bisa diubah</span></div>
+<div class="card metric"><small>Total jarak tercatat</small><strong id="totalKm">0.0 <span class="unit">km</span></strong><span class="unit">Semua aktivitas</span></div>
+<div class="card metric"><small>Total sesi</small><strong id="totalRuns">0</strong><span class="unit">Aktivitas tersimpan</span></div>
+<div class="card metric"><small>Rata-rata pace</small><strong id="avgPace">—</strong><span class="unit">Menit per kilometer</span></div>
+</div>
+<h2 class="section-title">Perkembangan 5K</h2><div class="card"><canvas id="chart" width="700" height="220"></canvas><p class="hint">Tambahkan hasil tes atau race 5K di Catat Lari untuk melihat tren waktu.</p></div>
+<h2 class="section-title">Target mingguan</h2><div class="card"><div class="row"><strong>Minggu berjalan</strong><strong id="weekKm">0 / 40 km</strong></div><div class="bar"><span id="weekBar"></span></div><p class="hint">Target awal ditetapkan 40 km/minggu sebagai patokan sementara. Ubah setelah volume latihan aktual dikonfirmasi.</p></div>
+</section>
+<section id="plan" class="page">
+<h2 class="section-title">Program latihan</h2><p class="hint">Jadwal ini merupakan kerangka awal. Sesuaikan volume dan pace dengan kondisi tubuh; jangan mengejar angka jika pemulihan belum baik.</p>
+<div class="card" id="planList"></div>
+</section>
+<section id="log" class="page">
+<h2 class="section-title">Catat aktivitas lari</h2><div class="card">
+<form id="runForm">
+<div class="formgrid"><div><label>Tanggal</label><input id="date" type="date" required></div><div><label>Jenis latihan</label><select id="type"><option>Easy run</option><option>Recovery</option><option>Long run</option><option>Interval</option><option>Tempo / Threshold</option><option>Race / Time trial</option><option>Lainnya</option></select></div></div>
+<div class="formgrid"><div><label>Jarak (km)</label><input id="distance" type="number" min="0.1" step="0.01" placeholder="Contoh: 8.5" required></div><div><label>Durasi (menit)</label><input id="duration" type="number" min="0.1" step="0.01" placeholder="Contoh: 48.5" required></div></div>
+<div class="formgrid"><div><label>Rata-rata HR (bpm)</label><input id="hr" type="number" min="1" placeholder="Opsional"></div><div><label>RPE (1–10)</label><select id="rpe"><option value="">Pilih</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div></div>
+<label>Catatan (perasaan, cuaca, kondisi kaki, dll.)</label><textarea id="notes" placeholder="Contoh: napas terkontrol, kaki terasa segar..."></textarea>
+<button class="btn" type="submit">Simpan aktivitas</button>
+</form></div>
+<h2 class="section-title">Catat hasil tes 5K</h2><div class="card"><form id="testForm"><div class="formgrid"><div><label>Tanggal tes</label><input id="testDate" type="date" required></div><div><label>Waktu 5K (mm:ss)</label><input id="testTime" placeholder="Contoh: 21:30" pattern="[0-9]{1,2}:[0-5][0-9]" required></div></div><button class="btn secondary" type="submit">Simpan hasil 5K</button></form></div>
+</section>
+<section id="history" class="page">
+<div class="row"><h2 class="section-title">Riwayat aktivitas</h2><button class="btn secondary" style="width:auto;margin:10px 0;padding:9px 12px" id="exportBtn">Ekspor CSV</button></div>
+<div class="card" id="historyList"><div class="empty">Belum ada aktivitas. Mulai catat lari pertamamu.</div></div>
+<div class="card"><strong>Cadangan data</strong><p class="hint">Data disimpan di browser perangkat ini. Ekspor CSV secara berkala agar catatan tidak hilang saat data situs dihapus atau pindah perangkat.</p><button class="btn secondary" id="backupBtn">Unduh backup JSON</button><button class="btn secondary" id="restoreBtn">Impor backup JSON</button><input id="restoreFile" type="file" accept="application/json" hidden></div>
+</section>
+</main>
+<div class="nav"><small>Data tersimpan di perangkat ini · Tambahkan ke Home Screen iPhone untuk akses cepat</small></div>
+<script>
+const $=id=>document.getElementById(id);
+const today=new Date().toISOString().slice(0,10);
+$('date').value=today;$('testDate').value=today;
+const plan=[
+['Minggu 1 · 2–8 Nov','Selasa: 6×400 m (1:42–1:44), jog 200 m. Kamis: easy 7–8 km + 4 strides. Sabtu: 3×8 menit tempo 4:40–4:50/km. Minggu: long run 12–13 km.'],
+['Minggu 2 · 9–15 Nov','Selasa: 8×400 m (1:40–1:42). Kamis: easy 8 km + strides. Sabtu: 2×12 menit tempo 4:40–4:50/km. Minggu: long run 13–14 km.'],
+['Minggu 3 · 16–22 Nov','Selasa: 5×800 m (3:24–3:28). Kamis: easy 8 km + strides. Sabtu: tempo 20 menit 4:35–4:45/km. Minggu: long run 14–15 km.'],
+['Minggu 4 · 23–29 Nov · Deload','Selasa: 6×400 m terkontrol. Kamis: easy 6–7 km. Sabtu: 2×8 menit tempo. Minggu: long run 11–12 km.'],
+['Minggu 5 · 30 Nov–6 Des','Selasa: 5×1.000 m (4:12–4:18). Kamis: easy 8 km + strides. Sabtu: 3×10 menit tempo. Minggu: long run 14 km.'],
+['Minggu 6 · 7–13 Des','Selasa: 6×800 m (3:20–3:24). Kamis: easy 8 km + strides. Sabtu: tempo 25 menit. Minggu: long run 15 km.'],
+['Minggu 7 · 14–20 Des','Selasa: 4×1.200 m (5:00–5:06). Kamis: easy 8 km + strides. Sabtu: 2×15 menit tempo. Minggu: long run 15–16 km.'],
+['Minggu 8 · 21–27 Des · Evaluasi','Selasa: 5×600 m terkontrol. Kamis: easy 7 km. Sabtu: tes 5K. Minggu: long run 11–12 km atau lebih pendek jika lelah.'],
+['Minggu 9 · 28 Des–3 Jan','Selasa: 5×1.000 m (4:05–4:10). Kamis: easy 8 km + strides. Sabtu: 3×8 menit tempo. Minggu: long run 14 km.'],
+['Minggu 10 · 4–10 Jan','Selasa: 6×800 m (3:12–3:18). Kamis: easy 8 km + strides. Sabtu: 2×2.000 m (4:20–4:25/km). Minggu: long run 13–14 km.'],
+['Minggu 11 · 11–17 Jan','Selasa: 3×1.000 m (3:58–4:02), tambah 3×400 m hanya jika segar. Kamis: easy 7–8 km + strides. Sabtu: tempo ringan 15 menit. Minggu: long run 11–12 km.'],
+['Minggu 12 · 18–24 Jan · Taper & race','Selasa: 4×400 m (1:34–1:36), terkontrol. Kamis: easy 5–6 km + strides. Sabtu: jog 15–20 menit. Minggu: RACE DAY 5K.']
+];
+$('planList').innerHTML=plan.map((p,i)=>`<div class="workout"><div class="row"><h3>${p[0]}</h3><input class="check" type="checkbox" data-week="${i}" aria-label="Tandai minggu selesai"></div><p>${p[1]}</p></div>`).join('');
+let state={runs:[],tests:[],pb:22,weekTarget:40};
+try{state={...state,...JSON.parse(localStorage.getItem('runTracker')||'{}')}}catch(e){}
+function save(){localStorage.setItem('runTracker',JSON.stringify(state));render()}
+function pace(secPerKm){let s=Math.round(secPerKm),m=Math.floor(s/60),r=s%60;return `${m}:${String(r).padStart(2,'0')}`}
+function parseTime(t){let a=t.split(':').map(Number);return a[0]*60+a[1]}
+function render(){
+let total=state.runs.reduce((a,r)=>a+Number(r.distance),0), secs=state.runs.reduce((a,r)=>a+Number(r.duration)*60,0);
+$('totalKm').innerHTML=total.toFixed(1)+' <span class="unit">km</span>';$('totalRuns').textContent=state.runs.length;
+$('avgPace').textContent=total?pace(secs/total):'—';$('pbValue').textContent=pace(state.pb*60);
+let days=Math.ceil((new Date('2027-01-24T00:00:00')-new Date())/86400000);$('daysLeft').textContent=Math.max(0,days)+' hari lagi';
+let pct=Math.max(0,Math.min(100,(22*60-state.pb*60)/(22*60-19*60+1)*100));$('progressBar').style.width=pct+'%';$('progressText').textContent=state.tests.length?`PB tercatat: ${pace(state.pb*60)} · ${Math.round(pct)}% menuju target waktu`:'Tambahkan hasil tes 5K untuk mengukur progres';
+let monday=new Date();monday.setDate(monday.getDate()-((monday.getDay()+6)%7));monday.setHours(0,0,0,0);
+let wk=state.runs.filter(r=>new Date(r.date+'T12:00:00')>=monday).reduce((a,r)=>a+Number(r.distance),0);
+$('weekKm').textContent=`${wk.toFixed(1)} / ${state.weekTarget} km`;$('weekBar').style.width=Math.min(100,wk/state.weekTarget*100)+'%';
+$('historyList').innerHTML=state.runs.length?[...state.runs].sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<div class="entry"><div class="row"><strong>${r.type} · ${r.distance} km</strong><span class="muted">${r.date}</span></div><p>${r.duration} menit · ${pace(Number(r.duration)*60/Number(r.distance))}/km ${r.hr?'· HR '+r.hr+' bpm':''} ${r.rpe?'· RPE '+r.rpe+'/10':''}</p>${r.notes?`<p>${escapeHtml(r.notes)}</p>`:''}<button class="btn secondary" style="width:auto;padding:6px 10px;margin-top:8px" onclick="deleteRun('${r.id}')">Hapus</button></div>`).join(''):'<div class="empty">Belum ada aktivitas. Mulai catat lari pertamamu.</div>';
+drawChart();
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function drawChart(){let c=$('chart'),ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);ctx.strokeStyle='#2b3b47';ctx.lineWidth=1;for(let i=0;i<4;i++){let y=25+i*52;ctx.beginPath();ctx.moveTo(45,y);ctx.lineTo(w-15,y);ctx.stroke()}let pts=[...state.tests].sort((a,b)=>a.date.localeCompare(b.date));if(!pts.length){ctx.fillStyle='#9eacb8';ctx.font='18px sans-serif';ctx.fillText('Belum ada hasil tes 5K',190,112);return}let vals=pts.map(x=>x.seconds),min=Math.min(19*60, ...vals)-20,max=Math.max(22*60,...vals)+20;ctx.strokeStyle='#b7f36b';ctx.lineWidth=4;ctx.beginPath();pts.forEach((p,i)=>{let x=45+(pts.length===1?0:i/(pts.length-1))*(w-80),y=25+(max-p.seconds)/(max-min)*(h-55);if(!i)ctx.moveTo(x,y);else ctx.lineTo(x,y);ctx.fillStyle='#b7f36b';ctx.beginPath();ctx.arc(x,y,6,0,Math.PI*2);ctx.fill()});ctx.stroke();ctx.fillStyle='#f3f6f8';ctx.font='14px sans-serif';pts.forEach((p,i)=>{let x=45+(pts.length===1?0:i/(pts.length-1))*(w-80),y=25+(max-p.seconds)/(max-min)*(h-55);ctx.fillText(p.time,x-18,y-13)})}
+$('runForm').addEventListener('submit',e=>{e.preventDefault();state.runs.push({id:Date.now().toString(),date:$('date').value,type:$('type').value,distance:$('distance').value,duration:$('duration').value,hr:$('hr').value,rpe:$('rpe').value,notes:$('notes').value});e.target.reset();$('date').value=today;save();document.querySelector('[data-tab="history"]').click()});
+$('testForm').addEventListener('submit',e=>{e.preventDefault();let t=$('testTime').value,s=parseTime(t);state.tests.push({date:$('testDate').value,time:t,seconds:s});state.pb=Math.min(state.pb,s/60);save();alert('Hasil 5K tersimpan.');});
+window.deleteRun=id=>{if(confirm('Hapus aktivitas ini?')){state.runs=state.runs.filter(r=>r.id!==id);save()}};
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab,.page').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active')}));
+$('exportBtn').onclick=()=>{let rows=[['date','type','distance_km','duration_min','avg_hr','rpe','notes'],...state.runs.map(r=>[r.date,r.type,r.distance,r.duration,r.hr,r.rpe,r.notes])];let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');download('running-log.csv',csv,'text/csv')};
+$('backupBtn').onclick=()=>download('5k-tracker-backup.json',JSON.stringify(state,null,2),'application/json');
+function download(name,data,type){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
+$('restoreBtn').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=async e=>{try{let d=JSON.parse(await e.target.files[0].text());if(!Array.isArray(d.runs)||!Array.isArray(d.tests))throw Error();state=d;save();alert('Backup berhasil diimpor.')}catch(err){alert('File backup tidak valid.')}};
+document.querySelectorAll('[data-week]').forEach((el,i)=>{el.checked=JSON.parse(localStorage.getItem('weeksDone')||'[]')[i]||false;el.onchange=()=>{let a=JSON.parse(localStorage.getItem('weeksDone')||'[]');a[i]=el.checked;localStorage.setItem('weeksDone',JSON.stringify(a))}});
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script></body></html>
